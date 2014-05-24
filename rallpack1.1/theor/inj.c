@@ -7,6 +7,8 @@
 */
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
+
 #include "nrutil.h"
 
 #define DT 50e-6
@@ -28,10 +30,9 @@
 
 #define PI 3.1415926535
 
+extern void do_explanation(char* name);
 
-main(argc,argv)
-	int	argc;
-	char	**argv;
+int main(int argc, char** argv)
 {
 	double t;
 	FILE *v0,*vx,*fopen();
@@ -54,7 +55,7 @@ main(argc,argv)
 	for(i=1;i<argc;i++) {
 		if (argv[i][0] != '-') {
 			do_explanation(argv[0]);
-			return;
+			return -1;
 		}
 		switch (argv[i][1]) {
 			case 't' : i++; tau0=atof(argv[i]);
@@ -80,7 +81,7 @@ main(argc,argv)
 			case 'n' : i++; nterms=atoi(argv[i]);
 				break;
 			case 'h' : do_explanation(argv[0]);
-				return;
+				return -1;
 				break;
 			default :
 				break;
@@ -112,10 +113,10 @@ main(argc,argv)
 	}
 	fclose(v0);
 	fclose(vx);
+        return 0;
 }
 
-do_explanation(name)
-	char	*name;
+void do_explanation(char* name)
 {
 	printf("usage : %s [-t tau0] [-T runTime] [-D dt] [-v vrest] [r RA]\n",
 		name);
@@ -134,7 +135,6 @@ double cablev(x,t,len,nterms)
 	double hx;
 	double rt;
 	double sum1,sum2;
-	float erfc();
 	int i;
 
 	if (t <= 0.0)

@@ -1,5 +1,4 @@
-float gammp(a,x)
-float a,x;
+float gammp(float a,float x)
 {
 	float gamser,gammcf,gln;
 	void gser(),gcf(),nrerror();
