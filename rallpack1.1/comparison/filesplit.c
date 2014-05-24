@@ -6,7 +6,7 @@
 */
 
 
-main(argc,argv)
+int main(argc,argv)
 	int argc;
 	char	**argv;
 {
@@ -17,23 +17,23 @@ main(argc,argv)
 
 	if (argc<2) {
 		printf("usage : %s datafile\n",argv[0]);
-		return;
+		return -1;
 	}
 	if (!(fp=fopen(argv[1],"r"))) {
-		printf("could not open file %s for reading\n");
-		return;
+		printf("could not open file %s for reading\n", argv[1]);
+		return -1;
 	}
 	sprintf(fname,"%s0",argv[1]);
 
 	if (!(fout0=fopen(fname,"w"))) {
-		printf("could not open file %s for writing\n");
-		return;
+		printf("could not open file %s for writing\n", argv[1]);
+		return -1;
 	}
 
 	sprintf(fname,"%sx",argv[1]);
 	if (!(foutx=fopen(fname,"w"))) {
-		printf("could not open file %s for writing\n");
-		return;
+		printf("could not open file %s for writing\n", argv[1]);
+		return -1;
 	}
 
 	while(fscanf(fp,"%lf%lf%lf",&t,&v0,&vx)==3) {
@@ -42,4 +42,5 @@ main(argc,argv)
 		fprintf(foutx,"%g	%g\n",t/1000.0,vx/1000.0);
 	}
 	printf("%d points found\n",i);
+        return 0;
 }

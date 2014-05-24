@@ -9,10 +9,11 @@
 
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
 
 #define MAXPTS 10000
 
-main(argc,argv)
+int main(argc,argv)
 	int	argc;
 	char	**argv;
 {
@@ -24,31 +25,31 @@ main(argc,argv)
 	float	temp,min=1e10,max=-1e10;
 	float	dt,maxt;
 	int		npts1,npts2;
-	float	scale,sumsq,nsumsq;
+	float	sumsq,nsumsq;
 	FILE	*out1,*out2;
 
 	if (argc<3) {
 		printf("usage : %s file1 file2 [-out]\n",argv[0]);
-		return;
+		return -1;
 	}
 
 	f1=fopen(argv[1],"r");
 	if (!f1) {
 		printf("Could not open file %s\n",argv[1]);
-		return;
+		return -1;
 	}
 	f2=fopen(argv[2],"r");
 	if (!f2) {
 		printf("Could not open file %s\n",argv[2]);
-		return;
+		return -1;
 	}
 
 	if (argc==4 && strcmp(argv[3],"-out")==0) {
 		out1=fopen("out1","w");
 		out2=fopen("out2","w");
 		if (!out1 || !out2) {
-			printf("Could not open files out1 and out2\n",argv[1]);
-			return;
+			printf("Could not open files out1 and out2\n");
+			return -1;
 		}
 	} else {
 		out1=out2=NULL;
@@ -102,4 +103,5 @@ main(argc,argv)
 		fclose(out1);
 		fclose(out2);
 	}
+        return 0;
 }

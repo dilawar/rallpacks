@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <math.h>
 
-main(argc,argv)
+int main(argc,argv)
 	int	argc;
 	char	**argv;
 {
@@ -21,25 +21,25 @@ main(argc,argv)
 
 	if (argc<3) {
 		printf("usage : %s file1 file2\n",argv[0]);
-		return;
+		return -1;
 	}
 
 	f1=fopen(argv[1],"r");
 	if (!f1) {
 		printf("Could not open file %s\n",argv[1]);
-		return;
+		return -1;
 	}
 	f2=fopen(argv[2],"r");
 	if (!f2) {
 		printf("Could not open file %s\n",argv[2]);
-		return;
+		return -1;
 	}
 
 	while(fscanf(f1,"%f %f",&t1,&v1) == 2 &&
 		fscanf(f2,"%f %f",&t2,&v2) == 2){
 		if (t1!=t2) {
 			printf("Error : file time scales are different\n");
-			return;
+			return -1;
 		}
 		sumsq+=(v1-v2)*(v1-v2);
 		npts+=1.0;
@@ -53,4 +53,5 @@ main(argc,argv)
 		max-min,
 		sqrt(sumsq/npts)/(max-min),
 		(int)npts);
+        return 0;
 }

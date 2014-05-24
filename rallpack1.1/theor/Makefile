@@ -1,6 +1,6 @@
 TARGET = currinj
 CFLAGS = -g
-CC= cc -Wall -Werror
+CC= cc -Wall -Werror 
 LIBS= -lm
 
 default : $(TARGET)

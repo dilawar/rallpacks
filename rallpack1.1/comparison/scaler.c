@@ -10,7 +10,7 @@
 #define XOFFSET 0.0
 #define YOFFSET 0.0
 
-main(argc,argv)
+int main(argc,argv)
 	int argc;
 	char	**argv;
 {
@@ -24,7 +24,7 @@ main(argc,argv)
 	if (argc < 7) {
 		printf("usage: %s infile outfile sx sy ox oy\n",
 			argv[0]);
-		exit(1);
+                return -1;
 	}
 	i=3;
 	sx=atof(argv[i]);
@@ -36,9 +36,11 @@ main(argc,argv)
 	fp=fopen(argv[1],"r");
 	fout=fopen(argv[2],"w");
 
-	for (i=0;ret=fscanf(fp,"%f%f",&x,&y);i++) {
-		if (ret==EOF) break;
-		if (ret==0) continue;
+	for (i=0;  ;i++) 
+        {
+                ret=fscanf(fp,"%f%f",&x,&y);
+		if(EOF == ret) break;
+		if (0 == ret) continue;
 		x -= ox;
 		y -= oy;
 		x *= sx;
@@ -47,4 +49,5 @@ main(argc,argv)
 	}
 	fclose(fp);
 	fclose(fout);
+        return 0;
 }

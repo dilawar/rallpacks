@@ -1,5 +1,5 @@
 /*
-** Rallpak passive cable benchmark for 10000 compartments
+** Rallpak pas cable benchmark for 10000 compartments
 */
 
 print "PRE-MODEL MEMORY STATS\n"
@@ -26,7 +26,7 @@ proc geometry() {
 }
 
 proc membrane() {
-	insert passive
+	insert pas
 	g = 1/40000
 	cm = 1
 	erev = -65
