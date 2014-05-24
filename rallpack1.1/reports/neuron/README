@@ -1,0 +1,15 @@
+This directory contains the hoc files for performing the
+Rallpack simulations using NEURON version 2.43
+
+Each directory has a series of .hoc files used for performing the simulations
+at assorted model sizes and timesteps.
+
+These simulations were run by U.S. Bhalla and David H. Bilitch at Caltech,
+July 1992. To the best of our knowledge they are a reasonable implementation
+of the simulations in NEURON. We would welcome corrections and updated
+benchmark results from more experienced users. Please address comments to  :
+
+	bhalla@smaug.cns.caltech.edu
+	dhb@cns.caltech.edu
+
+
