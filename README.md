@@ -1,8 +1,10 @@
 rallpacks
 =========
 
-Rallpacks in moose.
+See the original Rallpacks [here](http://genesis-sim.org/node/127). Original
+rallpacks is available in directory ./rallpack1.1 but modified so that it
+compiles with modern gcc.
 
-See the original Rallpacks [here](http://genesis-sim.org/node/127). The original rallpacks is modified so that it compiles with modern gcc.
+This is still a work in progress. We are using [moose](http://moose.ncbs.res.in) 
+simulator.
 
-This is still a work in progress. As soon as this notice is removed, you can use it. 
