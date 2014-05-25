@@ -11,25 +11,24 @@
 ********************************************************************/
 
 /* Setting up the parameters for the model */
-float	entire_len	= 0.001	// 1 mm
-float	dia=1.0e-6			// 1 microns
-float	len=1.0e-6			// 1 microns
-float	RM=4				
-float	RA=1.0
-float	CM=0.01
-float	EM=-0.065			// -65 mV
-float	inj=1.0e-10			// 0.1 nA injection
+float    entire_len    = 0.001    // 1 mm
+float    dia=1.0e-6            // 1 microns
+float    len=1.0e-6            // 1 microns
+float    RM=4                
+float    RA=1.0
+float    CM=0.01
+float    EM=-0.065            // -65 mV
+float    inj=1.0e-10            // 0.1 nA injection
+float    dt=50e-6            // 0.05 msec
+float    iodt=50e-6                // 0.05 msec 
+float    runtime=0.25            // 0.25 sec
+float    PI=3.1415926535
+float    ncompts=entire_len/len
+int     incompts=ncompts
+float    area=PI*len*dia
+float    Xarea=PI*dia*dia/4.0
 
-float	dt=50e-6			// 0.05 msec
-float	iodt=50e-6				// 0.05 msec 
-float	runtime=0.25			// 0.25 sec
-float	PI=3.1415926535
-float	ncompts=entire_len/len
-int		incompts=ncompts
-float	area=PI*len*dia
-float	Xarea=PI*dia*dia/4.0
-
-int		X_flag = 0
+int   X_flag = 0
 
 /********************************************************************
 **                                                                 **
@@ -42,10 +41,10 @@ int		X_flag = 0
 ** would mean iterating over and setting all the values */
 create compartment /proto/compartment
 set /proto/compartment \
-		Ra {RA*len/Xarea} \
-		Rm {RM/area} \
-		Cm {CM*area} \
-		Em {EM}
+        Ra {RA*len/Xarea} \
+        Rm {RM/area} \
+        Cm {CM*area} \
+        Em {EM}
 
 /******************************************************************/
 
@@ -54,33 +53,32 @@ set /proto/compartment \
 ** ones, it takes N^2 time to send messages between them.
 ** So we do the copying in two stages to reduce this time */
 int i,n1,n2
-
-	n1=sqrt({incompts})
-	n2=n1+incompts-(n1*n1)
-	createmap /proto/compartment /low {n1} 1
+n1={incompts}**0.5
+n2=n1+incompts-(n1*n1)
+createmap /proto/compartment /low {n1} 1
 /* Setting up the inter-compartment communications */
-	for(i=1;i<{n1};i=i+1)
-		ce /low/compartment[{i}]
-		sendmsg ../compartment[{i-1}] . RAXIAL Ra Vm
-		sendmsg . ../compartment[{i-1}] AXIAL Vm
-	end
+for(i=1;i<{n1};i=i+1)
+        ce /low/compartment[{i}]
+        addmsg ../compartment[{i-1}] . RAXIAL Ra Vm
+        addmsg . ../compartment[{i-1}] AXIAL Vm
+end
 
-	createmap /low /cable {n1-1} 1
-	move /low /cable/low[{n1-1}]
+createmap /low /cable {n1-1} 1
+move /low /cable/low[{n1-1}]
 /* Finishing up the remaining compartments */
-	ce /cable/low[{n1-1}]
-	for (i=n1;i<n2;i=i+1)
-		copy /proto/compartment /cable/low[{n1-1}]/compartment[{i}]
-		ce ^
-		sendmsg ../compartment[{i-1}] . RAXIAL Ra Vm
-		sendmsg . ../compartment[{i-1}] AXIAL Vm
-	end
+ce /cable/low[{n1-1}]
+for (i=n1;i<n2;i=i+1)
+        copy /proto/compartment /cable/low[{n1-1}]/compartment[{i}]
+        ce ^
+        addmsg ../compartment[{i-1}] . RAXIAL Ra Vm
+        addmsg . ../compartment[{i-1}] AXIAL Vm
+end
 
 /* Linking up the groups */
-	for(i=1;i<n1;i=i+1)
-		sendmsg /cable/low[{i-1}/compartment[{n1-1}] /cable/low[{i}]/compartment[0] RAXIAL Ra Vm
-		sendmsg /cable/low[{i}/compartment[0] /cable/low[{i-1}]/compartment[{n1-1}] AXIAL Vm
-	end
+for(i=1;i<n1;i=i+1)
+        addmsg /cable/low[{i-1}/compartment[{n1-1}] /cable/low[{i}]/compartment[0] RAXIAL Ra Vm
+        addmsg /cable/low[{i}/compartment[0] /cable/low[{i-1}]/compartment[{n1-1}] AXIAL Vm
+end
 
 /********************************************************************
 **                                                                 **
@@ -89,23 +87,23 @@ int i,n1,n2
 ********************************************************************/
 
 if (X_flag)
-	xstartup
-	create xform /form
-	create xgraph /form/graph
-	set /form/graph xmax {runtime} ymax 0.1 ymin -0.1  
-	sendmsg /cable/low[0]/compartment[0] /form/graph PLOT Vm *comp_0 *red
-	sendmsg /cable/low[{n1-1}]/compartment[{n2-1}] /form/graph \
-		PLOT Vm *comp_{incompts-1} *green
-	useclock /form 1
-	xshow /form
+    xstartup
+    create xform /form
+    create xgraph /form/graph
+    set /form/graph xmax {runtime} ymax 0.1 ymin -0.1  
+    addmsg /cable/low[0]/compartment[0] /form/graph PLOT Vm *comp_0 *red
+    addmsg /cable/low[{n1-1}]/compartment[{n2-1}] /form/graph \
+        PLOT Vm *comp_{incompts-1} *green
+    useclock /form 1
+    xshow /form
 end
 
 create asc_file /output/out0
 create asc_file /output/outx
 set /output/out0 filename cable.out0 leave_open 1 flush 0  
 set /output/outx filename cable.outx leave_open 1 flush 0
-sendmsg /cable/low[0]/compartment[0] /output/out0 SAVE Vm
-sendmsg /cable/low[{n1-1}]/compartment[{n2-1}] /output/outx SAVE Vm
+addmsg /cable/low[0]/compartment[0] /output/out0 SAVE Vm
+addmsg /cable/low[{n1-1}]/compartment[{n2-1}] /output/outx SAVE Vm
 
 useclock /output/out0 1
 useclock /output/outx 1
@@ -127,12 +125,11 @@ set /cable/low[0]/compartment[0] inject {inj}
 create hsolve /cable/solve
 set /cable/solve path /cable/low[]/compartment[] comptmode 1 chanmode 3
 
-setmethod 11	 /* using the crank-nicolson method */
+setmethod 11     /* using the crank-nicolson method */
 call /cable/solve SETUP
 
 /* run the simulation */
 
 reset
-
-step -t {runtime}
+step {runtime} -time
 quit

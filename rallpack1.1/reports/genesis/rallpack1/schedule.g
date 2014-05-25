@@ -1,30 +1,30 @@
-// genesis
+// genesis2
 /*
 ***************************************************************************
 **                            SIMULATION SCHEDULE                        **
 ***************************************************************************
 */
 
-clearschedule
+deletetasks
 
 //=========================================================================
 // 		function	arguments
 //=========================================================================
-addschedule	Simulate /##[CLASS=postmaster]	-action INIT
-addschedule	Simulate /##[CLASS=buffer]	-action INIT
-addschedule	Simulate /##[CLASS=segment]	-action INIT
+//addtask	Simulate /##[CLASS=postmaster]	-action INIT
+addtask	Simulate /##[CLASS=buffer]	-action INIT
+addtask	Simulate /##[CLASS=segment]	-action INIT
 
-addschedule	Simulate /##[CLASS=output]	-action PROCESS
-addschedule	Simulate /##[CLASS=buffer]	-action PROCESS
-addschedule	Simulate /##[CLASS=projection]	-action PROCESS
-addschedule Simulate /##[CLASS=gate] -action PROCESS
-addschedule	Simulate /##[CLASS=segment][CLASS!=membrane][CLASS!=gate][CLASS!=concentration] -action PROCESS
+addtask	Simulate /##[CLASS=output]	-action PROCESS
+addtask	Simulate /##[CLASS=buffer]	-action PROCESS
+addtask	Simulate /##[CLASS=projection]	-action PROCESS
+addtask Simulate /##[CLASS=gate] -action PROCESS
+addtask	Simulate /##[CLASS=segment][CLASS!=membrane][CLASS!=gate][CLASS!=concentration] -action PROCESS
 
-addschedule	Simulate /##[CLASS=membrane]	-action PROCESS
-addschedule	Simulate /##[CLASS=hsolver]	-action PROCESS
-addschedule	Simulate /##[CLASS=concentration]	-action PROCESS
+addtask	Simulate /##[CLASS=membrane]	-action PROCESS
+addtask	Simulate /##[CLASS=hsolver]	-action PROCESS
+addtask	Simulate /##[CLASS=concentration]	-action PROCESS
 
-addschedule	Simulate /##[CLASS=device]	-action PROCESS
-addschedule	Simulate /##[CLASS=postmaster]	-action PROCESS
+addtask	Simulate /##[CLASS=device]	-action PROCESS
+//addtask	Simulate /##[CLASS=postmaster]	-action PROCESS
 
-reschedule
+resched
