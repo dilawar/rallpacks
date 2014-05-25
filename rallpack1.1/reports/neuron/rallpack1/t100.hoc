@@ -4,7 +4,7 @@
 */
 
 print "PRE-MODEL MEMORY STATS\n"
-system("ps -v")
+
 
 entire_len = 1000
 dia = 1
@@ -76,5 +76,5 @@ proc run() { local io
 run()
 
 print "POST-MODEL MEMORY STATS\n"
-system("ps -v")
+
 
