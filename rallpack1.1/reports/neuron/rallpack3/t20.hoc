@@ -20,7 +20,7 @@ nseg = incompts
 ** Initialization routines
 */
 
-cable {nseg=incompts L=entire_len diam=dia insert HH}
+cable {nseg=incompts L=entire_len diam=dia insert hh}
 	
 
 proc geometry() {
@@ -30,7 +30,7 @@ proc geometry() {
 }
 
 proc membrane() {
-	insert HH
+	insert hh
 
 	ena = 50
 	ek = -77
