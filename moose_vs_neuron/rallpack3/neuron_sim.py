@@ -22,6 +22,7 @@ import re
 import sys
 import subprocess
 import time
+import datetime
 
 templateFile = './active_cable_template.nrn'
 
@@ -52,7 +53,20 @@ def main(args):
     if os.path.isfile(outFile):
         cmd = [ 'nrniv', '-nobanner', '-nogui', outFile ]
         print("[STEP] Executing: {}".format(" ".join(cmd)))
-        subprocess.call( cmd, shell=False)
+        t = time.time()
+        subprocess.check_call( cmd, shell=False)
+        simTime = time.time() - t
+        st = time.time()
+        stamp = datetime.datetime.fromtimestamp(st).strftime('%Y-%m-%d-%H%M%S')
+        with open('__rallpack3__.dat', 'a') as logF:
+            logF.write('<simulation time_stamp="{}">\n'.format(stamp))
+            logF.write("\t<elements>\n")
+            logF.write("\t\t<Compartment>{}</Compartment>\n".format(args['ncomp']))
+            logF.write("\t</elements>\n")
+            logF.write("\t<times>\n")
+            logF.write("\t\t<Simulation>{}</Simulation>\n".format(simTime))
+            logF.write("\t</times>\n")
+            logF.write("</simulation>\n")
     else:
         print("Can't write to {}".format(outFile))
 
