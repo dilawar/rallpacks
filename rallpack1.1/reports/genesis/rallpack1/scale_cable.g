@@ -13,6 +13,8 @@
 ********************************************************************/
 
 /* Setting up the parameters for the model */
+echo "[USER] Command line args: dt="$1," length="$2," filname="$3
+
 float	entire_len	= $2	// 1 mm
 float	dia=1.0e-6			// 1 microns
 float	len=1.0e-6			// 1 microns
@@ -43,8 +45,6 @@ if (iodt<dt)
 	iodt=dt
 end
 
-status -process
-ps aux | grep genesis
 
 /* Setting up a prototype compartment */
 /* The cable compartments could be directly created, but that
@@ -64,32 +64,34 @@ set /proto/compartment \
 ** So we do the copying in two stages to reduce this time */
 int i,n1,n2
 
-	n1=sqrt({incompts})
-	n2=n1+incompts-(n1*n1)
-	createmap /proto/compartment /low {n1} 1
-/* Setting up the inter-compartment communications */
-	for(i=1;i<{n1};i=i+1)
-		ce /low/compartment[{i}]
-		sendmsg ../compartment[{i-1}] . RAXIAL Ra Vm
-		sendmsg . ../compartment[{i-1}] AXIAL Vm
-	end
+n1={incompts}**0.5
+n2=n1+incompts-(n1*n1)
+createmap /proto/compartment /low {n1} 1
 
-	createmap /low /cable {n1-1} 1
-	move /low /cable/low[{n1-1}]
+/* Setting up the inter-compartment communications */
+for(i=1;i<{n1};i=i+1)
+        ce /low/compartment[{i}]
+        addmsg ../compartment[{i-1}] . RAXIAL Ra Vm
+        addmsg . ../compartment[{i-1}] AXIAL Vm
+end
+
+createmap /low /cable {n1-1} 1
+move /low /cable/low[{n1-1}]
+
 /* Finishing up the remaining compartments */
-	ce /cable/low[{n1-1}]
-	for (i=n1;i<n2;i=i+1)
-		copy /proto/compartment /cable/low[{n1-1}]/compartment[{i}]
-		ce ^
-		sendmsg ../compartment[{i-1}] . RAXIAL Ra Vm
-		sendmsg . ../compartment[{i-1}] AXIAL Vm
-	end
+ce /cable/low[{n1-1}]
+for (i=n1;i<n2;i=i+1)
+        copy /proto/compartment /cable/low[{n1-1}]/compartment[{i}]
+        ce ^
+        addmsg ../compartment[{i-1}] . RAXIAL Ra Vm
+        addmsg . ../compartment[{i-1}] AXIAL Vm
+end
 
 /* Linking up the groups */
-	for(i=1;i<n1;i=i+1)
-		sendmsg /cable/low[{i-1}/compartment[{n1-1}] /cable/low[{i}]/compartment[0] RAXIAL Ra Vm
-		sendmsg /cable/low[{i}/compartment[0] /cable/low[{i-1}]/compartment[{n1-1}] AXIAL Vm
-	end
+for(i=1;i<n1;i=i+1)
+        addmsg /cable/low[{i-1}/compartment[{n1-1}] /cable/low[{i}]/compartment[0] RAXIAL Ra Vm
+        addmsg /cable/low[{i}/compartment[0] /cable/low[{i-1}]/compartment[{n1-1}] AXIAL Vm
+end
 
 /********************************************************************
 **                                                                 **
@@ -102,8 +104,8 @@ if (X_flag)
 	create xform /form
 	create xgraph /form/graph
 	set /form/graph xmax {runtime} ymax 0.1 ymin -0.1  
-	sendmsg /cable/low[0]/compartment[0] /form/graph PLOT Vm *comp_0 *red
-	sendmsg /cable/low[{n1-1}]/compartment[{n2-1}] /form/graph \
+	addmsg /cable/low[0]/compartment[0] /form/graph PLOT Vm *comp_0 *red
+	addmsg /cable/low[{n1-1}]/compartment[{n2-1}] /form/graph \
 		PLOT Vm *comp_{incompts-1} *green
 	useclock /form 1
 	xshow /form
@@ -113,8 +115,8 @@ create asc_file /output/out0
 create asc_file /output/outx
 set /output/out0 filename $3.out0 leave_open 1 flush 0  
 set /output/outx filename $3.outx leave_open 1 flush 0
-sendmsg /cable/low[0]/compartment[0] /output/out0 SAVE Vm
-sendmsg /cable/low[{n1-1}]/compartment[{n2-1}] /output/outx SAVE Vm
+addmsg /cable/low[0]/compartment[0] /output/out0 SAVE Vm
+addmsg /cable/low[{n1-1}]/compartment[{n2-1}] /output/outx SAVE Vm
 
 useclock /output/out0 1
 useclock /output/outx 1
@@ -141,17 +143,11 @@ call /cable/solve SETUP
 
 /* run the simulation */
 
+check
 reset
-
-status -process
-ps aux | grep genesis
-step -t {runtime}
-status -process
-ps aux | grep genesis
+step {runtime} -time
 set /output/# flush 1
 call /output/# PROCESS
-
-rms $3.out0 ref_cable.0
-rms $3.outx ref_cable.x
-
+//rmsmatch $3.out0 ref_cable.0
+//rmsmatch $3.outx ref_cable.x
 quit
