@@ -52,7 +52,7 @@ proc run() { local io
 	v = -65
 	t=0
 
-	finf(-65)
+	
 	m = m_hh
 	h = h_hh
 	n = n_hh
