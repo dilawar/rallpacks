@@ -4,9 +4,9 @@
 
 entire_len = 1000
 dia = 1
-len = 0.1
+len = 1
 incompts = entire_len / len
-runtime = 50
+runtime = 250
 
 
 create cable

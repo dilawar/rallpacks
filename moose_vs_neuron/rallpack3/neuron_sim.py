@@ -46,7 +46,7 @@ def main(args):
     with open(templateFile, "r") as f:
         templateTxt = f.read()
     nrnText = getNeuronScript(args, templateTxt)
-    outFile = '__neuron__.hoc'
+    outFile = 'cable_in_neuron.hoc'
     with open(outFile, 'w') as outF:
         outF.write(nrnText)
 
@@ -58,7 +58,7 @@ def main(args):
         simTime = time.time() - t
         st = time.time()
         stamp = datetime.datetime.fromtimestamp(st).strftime('%Y-%m-%d-%H%M%S')
-        with open('__rallpack3__.dat', 'a') as logF:
+        with open('neuron.log', 'a') as logF:
             logF.write('<simulation time_stamp="{}">\n'.format(stamp))
             logF.write("\t<elements>\n")
             logF.write("\t\t<Compartment>{}</Compartment>\n".format(args['ncomp']))
