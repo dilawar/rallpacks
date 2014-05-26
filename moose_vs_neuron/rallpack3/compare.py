@@ -18,25 +18,37 @@ __status__           = "Development"
 import os
 import sys
 from collections import defaultdict
+import pylab
 
 def compare(mooseData, nrnData):
-    for k in nrnData:
-        print k
+    """Compare two data-vectors """
+    mooseX, mooseY = mooseData
+    nrnX, nrnY = nrnData
+    mooseX = [ x*1e3 for x in mooseX ]
+    for v in mooseY:
+        mooseY[v] = [ 1e3*y for y in mooseY[v]]
+
+    for i, v in enumerate( mooseY ):
+        pylab.plot(mooseX, mooseY.values()[i])
+        pylab.plot(nrnX, nrnY.values()[i])
+        pylab.show()
+
+    
+
 
 def txtToData(txt):
     """Convert text to data"""
-    vecX = defaultdict(list)
+    vecX = []
     vecY = defaultdict(list)
     for line in txt.split("\n"):
         line = line.strip()
-        pairs = line.split(",")
-        if len(pairs) > 1:
-            pairs = pairs[:-1]
-        for i, pair in enumerate(pairs):
-            pair = pair.strip()
-            x, y = pair.split()
-            vecX[i].append(float(x))
-            vecY[i].append(float(y))
+        values = line.split()
+        if not values:
+            continue
+        vecX.append(float(values[0].strip()))
+        for i, v in enumerate(values[1:]):
+            v = v.strip()
+            vecY[i].append(float(v))
     return vecX, vecY
 
 def main():
