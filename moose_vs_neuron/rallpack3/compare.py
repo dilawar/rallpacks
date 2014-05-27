@@ -28,14 +28,15 @@ def compare(mooseData, nrnData, outputFile = None):
     for v in mooseY:
         mooseY[v] = [ 1e3*y for y in mooseY[v]]
     for i, v in enumerate( mooseY ):
+        pylab.figure()
         pylab.plot(mooseX, mooseY.values()[i])
         pylab.plot(nrnX, nrnY.values()[i])
         if outputFile is None:
             pylab.show()
         else:
-            outputFile = "{}{}.png".format(outputFile, i)
-            print("[INFO] Dumping plot to {}".format(outputFile))
-            pylab.savefig(outputFile)
+            outFile = "{}{}.png".format(outputFile, i)
+            print("[INFO] Dumping plot to {}".format(outFile))
+            pylab.savefig(outFile)
 
 def txtToData(txt):
     """Convert text to data"""
