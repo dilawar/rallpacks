@@ -20,21 +20,22 @@ import sys
 from collections import defaultdict
 import pylab
 
-def compare(mooseData, nrnData):
+def compare(mooseData, nrnData, outputFile = None):
     """Compare two data-vectors """
     mooseX, mooseY = mooseData
     nrnX, nrnY = nrnData
     mooseX = [ x*1e3 for x in mooseX ]
     for v in mooseY:
         mooseY[v] = [ 1e3*y for y in mooseY[v]]
-
     for i, v in enumerate( mooseY ):
         pylab.plot(mooseX, mooseY.values()[i])
         pylab.plot(nrnX, nrnY.values()[i])
-        pylab.show()
-
-    
-
+        if outputFile is None:
+            pylab.show()
+        else:
+            outputFile = "{}{}.png".format(outputFile, i)
+            print("[INFO] Dumping plot to {}".format(outputFile))
+            pylab.savefig(outputFile)
 
 def txtToData(txt):
     """Convert text to data"""
@@ -52,14 +53,17 @@ def txtToData(txt):
     return vecX, vecY
 
 def main():
+    print("[INFO] Second file will be scaled by a factor of 1e3")
     mooseFile = sys.argv[1]
     nrnFile = sys.argv[2]
-    
+    if len(sys.argv) > 3:
+        outputFile = sys.argv[3]
+
     with open(mooseFile, "r") as f:
         mooseData = txtToData(f.read())
     with open(nrnFile, "r") as f:
         nrnData = txtToData(f.read())
-    compare(mooseData, nrnData)
+    compare(mooseData, nrnData, outputFile)
 
 if __name__ == '__main__':
     main()

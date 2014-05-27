@@ -57,7 +57,7 @@ def simResult( elemXml ):
 def plotProfile(results, plots = []):
     global xvec
     global yvecs
-    print yvecs, xvec
+    xvec = []
     for r in results:
         if r is None:
             continue
@@ -66,6 +66,7 @@ def plotProfile(results, plots = []):
             yvecs[i].append( r[1][c] )
 
     for i, yvec in enumerate(yvecs):
+        print len(yvec), len(xvec)
         p, = pylab.plot(xvec, yvec, 'o')
         plots.append(p)
 
@@ -87,9 +88,9 @@ def main( args ):
         for inputFile in args['input']:
             results = processProfile(inputFile)
             plotProfile(results, plots)
-        pylab.legend(plots, simclockList.keys())
+        #pylab.legend(plots, simclockList.keys())
         pylab.xlabel('No of compartment in active cable')
-        pylab.ylabel('Tiime spend by moose basecode')
+        pylab.ylabel('Tiime spend by simulator')
         pylab.title('Rallpack 3: Step size 10 compartments')
         output = args.get('output', None)
         if output is None:
