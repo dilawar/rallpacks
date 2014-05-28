@@ -30,6 +30,7 @@ import matplotlib.pyplot as plt
 EREST_ACT = -65e-3
 per_ms = 1e3
 dt = 5e-5
+#dt = 1e-6
 cable = []
 
 
