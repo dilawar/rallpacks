@@ -33,7 +33,7 @@ proc membrane() {
 	el = -65
 	gnabar = .12
 	gkbar = .036
-	gl = 1 / 40000
+	gl_hh = 1 / 40000
 
 	cm = 1
 }
