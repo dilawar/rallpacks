@@ -64,4 +64,5 @@ proc run() { local io
 	wopen()
 }
 
+finitialize()
 run()

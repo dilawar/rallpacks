@@ -57,6 +57,7 @@ def main():
     print("[INFO] Second file will be scaled by a factor of 1e3")
     mooseFile = sys.argv[1]
     nrnFile = sys.argv[2]
+    outputFile = None
     if len(sys.argv) > 3:
         outputFile = sys.argv[3]
 
