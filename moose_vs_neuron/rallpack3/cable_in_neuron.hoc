@@ -6,7 +6,7 @@ dia = 1.0
 len = 1.0
 incompts = 1000
 entire_len = incompts * len
-runtime = 250.0
+runtime = 1000.0
 
 create cable
 access cable
@@ -54,8 +54,8 @@ proc run() { local io
 
 	dt = 0.05
 	io = 0
-	wopen("cable.out")
-	fstim(1) fstim(0, 0, 0, 251, .100)
+	wopen("data/nrn.dat")
+	fstim(1) fstim(0, 0, 0, 1000.0, .100)
 		fprint("%g %g %g\n", t, v(0.0005), v(0.9995))
 	while (t < runtime) {
 	    fadvance()

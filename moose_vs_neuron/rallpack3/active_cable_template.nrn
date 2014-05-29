@@ -55,7 +55,7 @@ proc run() { local io
 	dt = ||dt||
 	io = 0
 	wopen("||data||")
-	fstim(1) fstim(0, 0, 0, 251, .100)
+	fstim(1) fstim(0, 0, 0, ||run_time||, .100)
 		fprint("%g %g %g\n", t, v(||0||), v(||x||))
 	while (t < runtime) {
 	    fadvance()

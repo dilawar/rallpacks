@@ -42,7 +42,7 @@ def findMaxima(y, x, filters=[], **kwargs):
             if insert:
                 maximas.append(a)
                 index.append(x[i+1])
-    return index, maximas
+    return np.array(index), np.array(maximas)
 
 def findMinima(y, x, filters=[], **kwargs):
     """Find all minimas on the curve 
@@ -72,19 +72,73 @@ def compareData(x1, y1, x2, y2):
     y1 = np.array(y1)
     y2 = np.array(y2)
 
-    assert(len(x1) == len(x2)), "X axis must have equal no of entries"
+    if len(x1) > len(x2):
+        print("[WARN] x1 is bigger than x2. Resizing to {}".format(len(x2)))
+        x1.resize(len(x2))
+        y1.resize(len(y2))
+    elif len(x2) > len(x1):
+        print("[WARN] x2 is bigger than x1. Resizing to {}".format(len(x1)))
+        x2.resize(len(x1))
+        y2.resize(len(y1))
+    else: 
+        pass
+
+    assert len(x1) == len(x2), "Length mismatch on X-axis"
+    assert len(y1) == len(y2), "Length mismatch on Y-axis" 
+
     for i, x in enumerate(x1):
         msg = "Value mismatch in x-axis: {}-{} = {}".format(x, x2[i], x-x2[i])
         assert np.absolute(x - x2[i]) < EPSILON, msg 
 
     # Good, now do a simple root-mean square test on both y-axis.
-    pylab.figure()
     maximasY1 = findMaxima(y1, x1, filters=[(lambda x : x > 20) ])
     maximasY2 = findMaxima(y2, x2, filters=[(lambda x : x > 20) ])
-    pylab.plot(maximasY1[0], maximasY1[1], '^')
-    pylab.plot(maximasY2[0], maximasY2[1], 'o')
-    pylab.show()
-                
+    minimaY1 = findMinima(y1, x1, filters=[(lambda x : x < -10) ])
+    minimaY2 = findMinima(y2, x2, filters=[(lambda x : x < -10) ])
+
+    timeDiff = maximasY2[0] - maximasY1[0]
+    peakDiff = maximasY2[1] - maximasY1[1]
+    bottomDiff = minimaY2[1] - minimaY1[1]
+
+    if timeDiff.mean() < 0.0:
+        print("++ ActionPotential in MOOSE are faster then NEURON")
+        print(" |- On avergae by {} msec/spike".format(np.diff(timeDiff).mean()))
+    elif timeDiff.mean() > 0.0:
+        print("++ ActionPotential in MOOSE are slower then NEURON")
+        print(" |- On avergae by {} msec/spike".format(np.diff(timeDiff).mean()))
+    else:
+        print("++ Speed of ActionPotential is same in MOOSE and NEURON")
+
+    if peakDiff.mean() < 0.0:
+        print("++ Highest value of ActionPotential are lower in MOOSE")
+        print(" |- On average by {} mV".format(peakDiff.mean()))
+    elif peakDiff.mean() > 0.0:
+        print("++ Highest value of ActionPotential are higher in MOOSE")
+        print(" |- On average {} mV".format(peakDiff.mean()))
+    else:
+        print("++ Peak values of ActionPotential are same")
+
+    if bottomDiff.mean() < 0.0:
+        print("++ Lowest value of ActionPotential is higher in MOOSE")
+        print(" |- On average {} mV".format(bottomDiff.mean()))
+    elif bottomDiff.mean() > 0.0:
+        print("++ Lowest value of ActionPotential is lower in MOOSE")
+        print(" |- On average {} mV".format(bottomDiff.mean()))
+    else:
+        print("++ Lowest values of ActionPotential are same")
+
+    
+    
+#    f, (ax1, ax2) = pylab.subplots(2, sharex=True)
+
+#    ax1.plot(timeDiff, "^")
+#    ax1.set_ylabel("Diffenrece in occurance of peak of Action potetinal (MOOSE - NEURON)")
+#    ax1.set_xlabel("Spike index")
+#
+#    ax2.plot(levelDiff, 'o')
+#    ax2.set_ylabel("Difference in the value of Action Potential peak (MOOSE-NEURON)")
+#    ax2.set_xlabel("Spike index")
+#    pylab.show()
 
 def compare(mooseData, nrnData, outputFile = None):
     """Compare two data-vectors """
@@ -94,8 +148,7 @@ def compare(mooseData, nrnData, outputFile = None):
     for v in mooseY:
         mooseY[v] = [ 1e3 * y for y in mooseY[v]]
     for i, v in enumerate( mooseY ):
-        peaksY1 = compareData(mooseX, mooseY.values()[i], nrnX, nrnY.values()[i])
-        print peaksY1
+        compareData(mooseX, mooseY.values()[i], nrnX, nrnY.values()[i])
 """
         pylab.figure()
         pylab.plot(mooseX, mooseY.values()[i])
