@@ -98,60 +98,11 @@ def compareData(x1, y1, x2, y2):
     assert len(x1) == len(x2), "Length mismatch on X-axis"
     assert len(y1) == len(y2), "Length mismatch on Y-axis" 
 
-    for i, x in enumerate(x1):
-        msg = "Value mismatch in x-axis: {}-{} = {}".format(x, x2[i], x-x2[i])
-        assert np.absolute(x - x2[i]) < EPSILON, msg 
-
-    maximasY1 = findMaxima(y1, x1, filters=[(lambda x : x > 20) ])
-    maximasY2 = findMaxima(y2, x2, filters=[(lambda x : x > 20) ])
-    minimaY1 = findMinima(y1, x1, filters=[(lambda x : x < -60) ])
-    minimaY2 = findMinima(y2, x2, filters=[(lambda x : x < -60) ])
-
-    #labels = ["MOOSE", "NEURON"]
-    #plots = drawPlots([minimaY2, minimaY1]
-    #        , labels
-    #        , "figures/moose_neuron_minimal.png"
-    #        )
-
-    #plots = drawPlots([maximasY2, maximasY1]
-    #        , labels
-    #        , "figures/moose_neuron_maxima.png"
-    #        )
-
-    peakDiff = maximasY1[1] - maximasY2[1]
-    if peakDiff.mean() < 0.0:
-        print("++ Highest value of a pulse in AP is lower in MOOSE")
-        print(" |- On average by {} mV".format(peakDiff.mean()))
-    elif peakDiff.mean() > 0.0:
-        print("++ Highest value of a pulse in AP is higher in MOOSE")
-        print(" |- On average {} mV".format(peakDiff.mean()))
-    else:
-        print("++ Peak values of ActionPotential are same")
-    
-    minimaY1, minimaY2 = sanitizeTuples(minimaY1, minimaY2)
-    minimaDiff = minimaY1[1] - minimaY2[1]
-    if minimaDiff.mean() < 0.0:
-        print("++ Lowest value in a pulse of AP is lower in MOOSE")
-        print(" |- On average by {} mV".format(minimaDiff.mean()))
-    elif minimaDiff.mean() > 0.0:
-        print("++ Lowest value in a pulse of AP is higher in MOOSE")
-        print(" |- On average by {} mV".format(minimaDiff.mean()))
-    else:
-        print("++ Lowest value in a puse of AP is same")
+    pylab.plot(x1, y1)
+    pylab.plot(x2, y2)
+    pylab.show()
 
 
-    peakTimeDiff = maximasY1[0] - maximasY2[0]
-    bottomTimeDiff = minimaY1[0] - minimaY2[0]
-
-    meanTime = (peakTimeDiff.mean() + bottomTimeDiff.mean())/2
-    if meanTime < 0.0:
-        print("++ ActionPotential in MOOSE are faster then NEURON")
-        print(" |- On avergae by {} msec/spike".format(-meanTime))
-    elif meanTime > 0.0:
-        print("++ ActionPotential in MOOSE are slower then NEURON")
-        print(" |- On avergae by {} msec/spike".format(meanTime))
-    else:
-        print("++ Speed of ActionPotential is same in MOOSE and NEURON")
 
 def sanitizeTuples(tuple1, tuple2):
     """Fix the lengths of tuples. 
@@ -189,7 +140,7 @@ def compare(mooseData, nrnData, outputFile = None):
     mooseX = [ x * 1e3 for x in mooseX ]
     for v in mooseY:
         mooseY[v] = [ 1e3 * y for y in mooseY[v]]
-    for i, v in enumerate( mooseY ):
+    for i, v in enumerate(mooseY):
         compareData(mooseX, mooseY.values()[i], nrnX, nrnY.values()[i])
 
 def txtToData(txt):
