@@ -32,7 +32,7 @@ def findMaxima(y, x, filters=[], **kwargs):
     maximas = []
     index = []
     for i, a in enumerate(y[1:-1]):
-        if a > y[i] and a > y[i+2]:
+        if a >= y[i] and a > y[i+2]:
             # Check if point satisfies addtional condition.
             insert = True
             for f in filters:
@@ -50,7 +50,7 @@ def findMinima(y, x, filters=[], **kwargs):
     minimas = []
     index = []
     for i, a in enumerate(y[1:-1]):
-        if a < y[i] and a < y[i+2]:
+        if a <= y[i] and a < y[i+2]:
             # Check if point satisfies addtional condition.
             insert = True
             for f in filters:
@@ -71,14 +71,12 @@ def drawPlots(plots, labels = [], figName = None, **kwargs):
         p, = pylab.plot(x, y)
         ps.append(p)
     if figName is None:
-        pylab.show()
-        return 
+        return
     print("[PLOT] Saving plot to {}".format(figName))
     pylab.savefig(figName)
-    return ps
 
 def compareData(x1, y1, x2, y2):
-    """Given two plots (x1, y1) and (x2, y2), Do some statistics on them 
+    """
     """
     # First compare that there x-axis are same. else report warning.
     x1 = np.array(x1)
@@ -109,28 +107,18 @@ def compareData(x1, y1, x2, y2):
     minimaY1 = findMinima(y1, x1, filters=[(lambda x : x < -67) ])
     minimaY2 = findMinima(y2, x2, filters=[(lambda x : x < -67) ])
 
-    labels = ["MOOSE", "NEURON"]
-    plots = drawPlots([minimaY2, minimaY1]
-            , labels
-            , "figures/moose_neuron_minimal.png"
-            )
+    #labels = ["MOOSE", "NEURON"]
+    #plots = drawPlots([minimaY2, minimaY1]
+    #        , labels
+    #        , "figures/moose_neuron_minimal.png"
+    #        )
 
-    plots = drawPlots([maximasY2, maximasY1]
-            , labels
-            , "figures/moose_neuron_maxima.png"
-            )
+    #plots = drawPlots([maximasY2, maximasY1]
+    #        , labels
+    #        , "figures/moose_neuron_maxima.png"
+    #        )
 
-    timeDiff = maximasY2[0] - maximasY1[0]
-    peakDiff = maximasY2[1] - maximasY1[1]
-
-    if timeDiff.mean() < 0.0:
-        print("++ ActionPotential in MOOSE are faster then NEURON")
-        print(" |- On avergae by {} msec/spike".format(np.diff(timeDiff).mean()))
-    elif timeDiff.mean() > 0.0:
-        print("++ ActionPotential in MOOSE are slower then NEURON")
-        print(" |- On avergae by {} msec/spike".format(np.diff(timeDiff).mean()))
-    else:
-        print("++ Speed of ActionPotential is same in MOOSE and NEURON")
+    peakDiff = maximasY1[1] - maximasY2[1]
 
     if peakDiff.mean() < 0.0:
         print("++ Highest value of ActionPotential are lower in MOOSE")
@@ -140,32 +128,51 @@ def compareData(x1, y1, x2, y2):
         print(" |- On average {} mV".format(peakDiff.mean()))
     else:
         print("++ Peak values of ActionPotential are same")
+    
+    minimaY1, minimaY2 = sanitizeTuples(minimaY1, minimaY2)
+    
+    peakTimeDiff = maximasY1[0] - maximasY2[0]
+    bottomTimeDiff = minimaY1[0] - minimaY2[0]
 
-    if len(minimaY2[1]) < len(minimaY1[1]):
-        print("[WARN] Ignoring some entries in Y2 at front")
-        minimaY2 = (minimaY2[0][-len(minimaY1):], minimaY1[0][-len(minimaY1)])
-    bottomDiff = minimaY2[1] - minimaY1[1]
-    if bottomDiff.mean() < 0.0:
-        print("++ Lowest value of ActionPotential is higher in MOOSE")
-        print(" |- On average {} mV".format(bottomDiff.mean()))
-    elif bottomDiff.mean() > 0.0:
-        print("++ Lowest value of ActionPotential is lower in MOOSE")
-        print(" |- On average {} mV".format(bottomDiff.mean()))
+    meanTime = peakTimeDiff.mean() - bottomTimeDiff.mean()
+
+    if meanTime < 0.0:
+        print("++ ActionPotential in MOOSE are faster then NEURON")
+        print(" |- On avergae by {} msec/spike".format(meanTime))
+    elif meanTime > 0.0:
+        print("++ ActionPotential in MOOSE are slower then NEURON")
+        print(" |- On avergae by {} msec/spike".format(meanTime))
     else:
-        print("++ Lowest values of ActionPotential are same")
+        print("++ Speed of ActionPotential is same in MOOSE and NEURON")
 
+def sanitizeTuples(tuple1, tuple2):
+    """Fix the lengths of tuples. 
     
+    These tuples contain data of an event. If one needs to compare these events,
+    one has to make sure that we are not comparing different no of events.
     
-#    f, (ax1, ax2) = pylab.subplots(2, sharex=True)
+    Experience has it that in ActionPotential, the bad data about maxima and
+    minima is in the first pulse. So we remove the data at the begining of the
+    array. 
+    
+    """
+    print("[WARN] This is a customized function for comparing maxima and minima")
+    print("       Dont use it on generic data.")
 
-#    ax1.plot(timeDiff, "^")
-#    ax1.set_ylabel("Diffenrece in occurance of peak of Action potetinal (MOOSE - NEURON)")
-#    ax1.set_xlabel("Spike index")
-#
-#    ax2.plot(levelDiff, 'o')
-#    ax2.set_ylabel("Difference in the value of Action Potential peak (MOOSE-NEURON)")
-#    ax2.set_xlabel("Spike index")
-#    pylab.show()
+    x1, y1 = tuple1
+    x2, y2 = tuple2
+
+    assert len(x1) == len(y1), "Length mismatch"
+    assert len(x2) == len(y2), "Length mismatch"
+
+    if len(y1) > len(y2):
+        y1 = y1[-len(y2):]
+        x1 = x1[-len(x2):]
+    elif len(y2) > len(y1):
+        y2 = y2[-len(y1):]
+        x2 = x2[-len(x1):]
+    return (x1, y1), (x2, y2)
+
 
 def compare(mooseData, nrnData, outputFile = None):
     """Compare two data-vectors """
@@ -176,17 +183,6 @@ def compare(mooseData, nrnData, outputFile = None):
         mooseY[v] = [ 1e3 * y for y in mooseY[v]]
     for i, v in enumerate( mooseY ):
         compareData(mooseX, mooseY.values()[i], nrnX, nrnY.values()[i])
-"""
-    pylab.figure()
-    pylab.plot(mooseX, mooseY.values()[i])
-    pylab.plot(nrnX, nrnY.values()[i])
-    if outputFile is None:
-        pylab.show()
-    else:
-        outFile = "{}{}.png".format(outputFile, i)
-        print("[INFO] Dumping plot to {}".format(outFile))
-        pylab.savefig(outFile)
-"""
 
 def txtToData(txt):
     """Convert text to data"""
@@ -218,4 +214,5 @@ def main():
     compare(mooseData, nrnData, outputFile)
 
 if __name__ == '__main__':
+    print("[WARN] Must not be used on generic data. You have been warned")
     main()
