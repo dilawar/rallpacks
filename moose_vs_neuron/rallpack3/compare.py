@@ -104,8 +104,8 @@ def compareData(x1, y1, x2, y2):
 
     maximasY1 = findMaxima(y1, x1, filters=[(lambda x : x > 20) ])
     maximasY2 = findMaxima(y2, x2, filters=[(lambda x : x > 20) ])
-    minimaY1 = findMinima(y1, x1, filters=[(lambda x : x < -67) ])
-    minimaY2 = findMinima(y2, x2, filters=[(lambda x : x < -67) ])
+    minimaY1 = findMinima(y1, x1, filters=[(lambda x : x < -60) ])
+    minimaY2 = findMinima(y2, x2, filters=[(lambda x : x < -60) ])
 
     #labels = ["MOOSE", "NEURON"]
     #plots = drawPlots([minimaY2, minimaY1]
@@ -119,26 +119,34 @@ def compareData(x1, y1, x2, y2):
     #        )
 
     peakDiff = maximasY1[1] - maximasY2[1]
-
     if peakDiff.mean() < 0.0:
-        print("++ Highest value of ActionPotential are lower in MOOSE")
+        print("++ Highest value of a pulse in AP is lower in MOOSE")
         print(" |- On average by {} mV".format(peakDiff.mean()))
     elif peakDiff.mean() > 0.0:
-        print("++ Highest value of ActionPotential are higher in MOOSE")
+        print("++ Highest value of a pulse in AP is higher in MOOSE")
         print(" |- On average {} mV".format(peakDiff.mean()))
     else:
         print("++ Peak values of ActionPotential are same")
     
     minimaY1, minimaY2 = sanitizeTuples(minimaY1, minimaY2)
-    
+    minimaDiff = minimaY1[1] - minimaY2[1]
+    if minimaDiff.mean() < 0.0:
+        print("++ Lowest value in a pulse of AP is lower in MOOSE")
+        print(" |- On average by {} mV".format(minimaDiff.mean()))
+    elif minimaDiff.mean() > 0.0:
+        print("++ Lowest value in a pulse of AP is higher in MOOSE")
+        print(" |- On average by {} mV".format(minimaDiff.mean()))
+    else:
+        print("++ Lowest value in a puse of AP is same")
+
+
     peakTimeDiff = maximasY1[0] - maximasY2[0]
     bottomTimeDiff = minimaY1[0] - minimaY2[0]
 
-    meanTime = peakTimeDiff.mean() - bottomTimeDiff.mean()
-
+    meanTime = (peakTimeDiff.mean() + bottomTimeDiff.mean())/2
     if meanTime < 0.0:
         print("++ ActionPotential in MOOSE are faster then NEURON")
-        print(" |- On avergae by {} msec/spike".format(meanTime))
+        print(" |- On avergae by {} msec/spike".format(-meanTime))
     elif meanTime > 0.0:
         print("++ ActionPotential in MOOSE are slower then NEURON")
         print(" |- On avergae by {} msec/spike".format(meanTime))
