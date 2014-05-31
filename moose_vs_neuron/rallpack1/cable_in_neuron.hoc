@@ -29,25 +29,6 @@ proc membrane() {
 }
 
 /*
-** Graphics routines
-*/
-
-proc plotvolt() { local x
-
-	axis(0,entire_len,10,0,2,10)
-	setcolor(7)
-	axis()
-
-	plot(1, entire_len/2, -.3) plt(-2) print "x"
-	plot(1, -entire_len, 1) plt(-2) print "V"
-
-	plot(1)
-	for (x) {
-		plot(x*entire_len, v(x)/1000)
-	}
-}
-
-/*
 ** Simulation and output of data and graphics (graphics optional)
 */
 
@@ -63,7 +44,7 @@ proc run() { local io
 		fprint("%g %g %g\n", t, v(0.0005), v(0.9995))
 	while (t < runtime) {
 	    fadvance()
-		fprint("%g %g %g\n", t, v(0.0005), v(0.9995))
+            fprint("%g %g %g\n", t, v(0.0005), v(0.9995))
 	}
 	wopen()
 }

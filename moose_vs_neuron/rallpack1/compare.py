@@ -80,8 +80,8 @@ def compareData(x1, y1, x2, y2):
     """
     # First compare that there x-axis are same. else report warning.
     x1 = np.array(x1)
-    x2 = np.array(x2)
     y1 = np.array(y1)
+    x2 = np.array(x2)
     y2 = np.array(y2)
 
     if len(x1) > len(x2):
@@ -139,7 +139,7 @@ def compare(mooseData, nrnData, outputFile = None):
     nrnX, nrnY = nrnData
     mooseX = [ x * 1e3 for x in mooseX ]
     for v in mooseY:
-        mooseY[v] = [ 1e3 * y for y in mooseY[v]]
+        mooseY[v] = [ 1e3 * y for y in mooseY[v] ]
     for i, v in enumerate(mooseY):
         compareData(mooseX, mooseY.values()[i], nrnX, nrnY.values()[i])
 
