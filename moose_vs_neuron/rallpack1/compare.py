@@ -98,8 +98,8 @@ def compareData(x1, y1, x2, y2):
     assert len(x1) == len(x2), "Length mismatch on X-axis"
     assert len(y1) == len(y2), "Length mismatch on Y-axis" 
 
-    pylab.plot(x1, y1)
-    pylab.plot(x2, y2)
+    diff = y1 - y2
+    pylab.plot(x1, diff)
     pylab.show()
 
 

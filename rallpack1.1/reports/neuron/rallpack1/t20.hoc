@@ -1,11 +1,3 @@
-
-/*
-** Rallpak pas cable benchmark
-*/
-
-print "PRE-MODEL MEMORY STATS\n"
-
-
 entire_len = 1000
 dia = 1
 len = 1
@@ -64,17 +56,16 @@ proc run() { local io
 	dt = 0.02
 	io = 0
 	wopen("t20.out")
-	fstim(1) fstim(0, 0, 0, 250, .100)
-	fprint("%g %g %g\n", t, v(5e-4), v(.9995))
+	fstim(1) fstim(0, 0, 0, 255, .100)
+	fprint("%g %g %g\n", t, v(5e-4), v(0.09995))
 	while (t < runtime) {
 	    fadvance()
-		fprint("%g %g %g\n", t, v(5e-4), v(.9995))
+            fprint("%g %g %g\n", t, v(5e-4), v(0.09995))
 	}
 	wopen()
 }
 
 run()
 
-print "POST-MODEL MEMORY STATS\n"
 
 

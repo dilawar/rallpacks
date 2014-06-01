@@ -186,12 +186,12 @@ class PasiveCable( ):
         moose.start( simTime )
 
 def main( args ):
-    cableLength = float(args['length'])
-    compNons = int(args['ncomp'])
+    cableLength = args['length']
+    compNons = args['ncomp']
     compartmentSize = cableLength / compNons
     cable = PasiveCable( args )
     first = 0
-    last = int(int(args['x']) / compartmentSize) - 1
+    last = args['x']
     table1 = utils.recordTarget('/data/table1', cable.cable[first].mc_, 'vm' )
     table2 = utils.recordTarget('/data/table2', cable.cable[last].mc_, 'vm' )
 
@@ -221,6 +221,7 @@ if __name__ == '__main__':
             )
     parser.add_argument( '--dt'
             , default = 5e-5
+            , type = float
             , help = 'Step time during simulation'
             )
     parser.add_argument( '--Em'
@@ -229,30 +230,37 @@ if __name__ == '__main__':
             )
     parser.add_argument( '--RA'
             , default = 1.0
+            , type = float
             , help = 'Axial resistivity'
             )
     parser.add_argument( '--lambda'
             , default = 1e-3
+            , type = float
             , help = 'Lambda, what else?'
             )
     parser.add_argument( '--x'
-            , default = 1e-3
-            , help = 'You should record membrane potential somewhere, right?'
+            , default = 999
+            , type = int
+            , help = 'The index of compartment at which one records'
             ) 
     parser.add_argument( '--length'
             , default = 1e-3
+            , type = float
             , help = 'Length of the cable'
             )
     parser.add_argument( '--diameter'
             , default = 1e-6
+            , type = float
             , help = 'Diameter of cable'
             )
     parser.add_argument( '--inj'
             , default = 1e-10
+            , type = float
             , help = 'Current injected at one end of the cable'
             )
     parser.add_argument( '--ncomp'
             , default = 1000
+            , type = int
             , help = 'No of compartment in cable'
             )
     parser.add_argument( '--output'
@@ -260,5 +268,5 @@ if __name__ == '__main__':
             , help = 'Store simulation results to this file'
             )
     args = parser.parse_args()
-    main( vars(args) )
+    main(vars(args))
 
