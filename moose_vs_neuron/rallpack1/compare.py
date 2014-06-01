@@ -101,8 +101,13 @@ def compareData(x1, y1, x2, y2):
     diff = y1 - y2
     pylab.plot(x1, diff)
     pylab.show()
-
-
+    linDiff = diff.sum()
+    rms = np.zeros(len(diff))
+    for i, d in enumerate(diff):
+        rms[i] = d**2.0
+    rms = rms.sum() ** 0.5
+    
+    print(" |- RMS diff is: {}".format(rms))
 
 def sanitizeTuples(tuple1, tuple2):
     """Fix the lengths of tuples. 

@@ -3,7 +3,7 @@ MOOSE_SCRIPT=moose_sim.py
 NRN_SCRIPT=neuron_sim.py
 MOOSE_DATA=data/moose.dat
 NEURON_DATA=data/nrn.dat
-RUN_TIME=1.0
+RUN_TIME=0.25
 
 
 all: data compare
