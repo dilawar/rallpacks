@@ -150,8 +150,6 @@ class PasiveCable( ):
     def setupHSolve(self, path='/hsolve'):
         """ Setup hsolve solver """
         hsolve = moose.HSolve( path )
-        hsolve.dt = self.simDt
-        moose.useClock(1, path, 'process')
         hsolve.target = self.cablePath
 
 
@@ -163,17 +161,6 @@ class PasiveCable( ):
         self.simDt = simDt
         self.plotDt = plotDt
         self.setupDUT( )
- 
-        # Setup clocks 
-        utils.dump("STEP", "Setting up the clocks ... ")
-        moose.setClock( 0, self.simDt )
-        moose.setClock( 1, self.simDt )
-        moose.setClock( 2, self.simDt )
-
-        ## Use clocksc
-        moose.useClock( 0, '/cable/##'.format(self.cablePath), 'process' )
-        moose.useClock( 1, '/cable/##'.format(self.cablePath), 'init' )
-        moose.useClock( 2, '{}/##'.format(self.tablePath), 'process' )
 
         utils.dump("STEP"
                 , [ "Simulating cable for {} sec".format(simTime)
@@ -182,7 +169,6 @@ class PasiveCable( ):
                 )
         moose.reinit( )
         self.setupHSolve( )
-        utils.verify( )
         moose.start( simTime )
 
 def main( args ):

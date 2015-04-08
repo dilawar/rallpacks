@@ -6,7 +6,7 @@ NEURON_DATA=data/nrn.dat
 RUN_TIME=0.25
 
 
-all: data compare
+all: data 
 
 compare: compare.py ${MOOSE_DATA} ${NEURON_DATA} 
 	@echo "[MAKE] Comparing data"
@@ -17,11 +17,11 @@ data: ${MOOSE_DATA} ${NEURON_DATA}
 
 ${MOOSE_DATA}: moose_sim.py
 	@echo "[MAKE] Running moose on rallpack3"
-	${PYC} $< --run_time ${RUN_TIME} --output $@
+	time ${PYC} $< --run_time ${RUN_TIME} --output $@
 
 ${NEURON_DATA}: neuron_sim.py passive_cable_template.nrn
 	@echo "[MAKE] Running NEURON on rallpack3"
-	${PYC} $< --run_time ${RUN_TIME} --data $@
+	time ${PYC} $< --run_time ${RUN_TIME} --data $@
 
 clean:
 	rm -f ${MOOSE_DATA} ${NEURON_DATA} 

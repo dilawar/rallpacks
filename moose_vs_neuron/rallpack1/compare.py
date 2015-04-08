@@ -75,7 +75,7 @@ def drawPlots(plots, labels = [], figName = None, **kwargs):
     print("[PLOT] Saving plot to {}".format(figName))
     pylab.savefig(figName)
 
-def compareData(x1, y1, x2, y2):
+def compareData(x1, y1, x2, y2, **kwargs):
     """
     """
     # First compare that there x-axis are same. else report warning.
@@ -101,7 +101,13 @@ def compareData(x1, y1, x2, y2):
     p1, = pylab.plot(x1, y1)
     p2, = pylab.plot(x2, y2)
     pylab.legend([p1, p2], ["MOOSE", "NEURON"])
-    pylab.show()
+
+    outfile = kwargs.get('outfile', None)
+    if not outfile:
+        pylab.show()
+    else:
+        mu.info("Saving figure to %s" % outfile)
+        pylab.savefig(outfile)
     
     diff = y1 - y2
     linDiff = diff.sum()
