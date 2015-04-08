@@ -56,6 +56,7 @@ def main(args):
         t = time.time()
         subprocess.check_call( cmd, shell=False)
         simTime = time.time() - t
+        print("++++ NEURON took %s sec" % simTime)
         st = time.time()
         stamp = datetime.datetime.fromtimestamp(st).strftime('%Y-%m-%d-%H%M%S')
         with open('neuron.log', 'a') as logF:

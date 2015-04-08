@@ -3,7 +3,7 @@ MOOSE_SCRIPT=moose_sim.py
 NRN_SCRIPT=neuron_sim.py
 MOOSE_DATA=data/moose.dat
 NEURON_DATA=data/nrn.dat
-RUN_TIME=0.50
+RUN_TIME=0.25
 
 
 all: data  compare
@@ -27,3 +27,4 @@ ${NEURON_DATA}: neuron_sim.py passive_cable_template.nrn
 clean:
 	rm -f ${MOOSE_DATA} ${NEURON_DATA} 
 	rm -rf *.pyc
+	rm -rf *.log

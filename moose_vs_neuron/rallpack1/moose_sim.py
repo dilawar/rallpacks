@@ -184,6 +184,7 @@ def main( args ):
     sim_dt = args['dt']
     outputFile = args['output']
     st = cable.simulate(simTime)
+    print("++++ MOOSE took %s sec" % st)
     #utils.plotRecords(records)
     utils.saveRecords(records, outfile="data/moose.dat")
 
