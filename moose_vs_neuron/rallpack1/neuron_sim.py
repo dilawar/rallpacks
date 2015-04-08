@@ -107,7 +107,7 @@ if __name__ == '__main__':
             , help = 'Lambda, what else?'
             )
     parser.add_argument( '--x'
-            , default = 999
+            , default = -1
             , type = int
             , help = 'Index of compartment at which membrane potential is recorded'
             ) 
