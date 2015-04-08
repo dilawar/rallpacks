@@ -2,7 +2,7 @@
 
 """cable.py: A passive cable of n compartments.
 
-Last modified: Wed May 21, 2014  04:26AM
+Last modified: Wed Apr 08, 2015  03:15PM
 
 """
     
@@ -24,6 +24,8 @@ import moose.utils as utils
 import os
 import pylab
 import numpy as np
+import time
+import datetime
 
 
 class MooseCompartment():
@@ -153,23 +155,20 @@ class PasiveCable( ):
         hsolve.target = self.cablePath
 
 
-    def simulate( self, simTime, simDt = 1e-3, plotDt = None ):
+    def simulate( self, simTime):
         '''Simulate the cable '''
 
-        if plotDt is None:
-            plotDt = simDt / 2
-        self.simDt = simDt
-        self.plotDt = plotDt
         self.setupDUT( )
-
         utils.dump("STEP"
-                , [ "Simulating cable for {} sec".format(simTime)
-                    , " simDt: %s, plotDt: %s" % ( self.simDt, self.plotDt )
-                    ]
+                ,  "Simulating cable for {} sec".format(simTime)
                 )
         moose.reinit( )
         self.setupHSolve( )
+        t = time.time()
         moose.start( simTime )
+        st = time.time()
+        return st-t
+        
 
 def main( args ):
     cableLength = args['length']
@@ -180,16 +179,24 @@ def main( args ):
     last = args['x']
     table1 = utils.recordTarget('/data/table1', cable.cable[first].mc_, 'vm' )
     table2 = utils.recordTarget('/data/table2', cable.cable[last].mc_, 'vm' )
-
+    records = { 'comp0' : table1, 'comp1' : table2 }
     simTime = args['run_time']
     sim_dt = args['dt']
     outputFile = args['output']
+    st = cable.simulate(simTime)
+    #utils.plotRecords(records)
+    utils.saveRecords(records, outfile="data/moose.dat")
 
-    cable.simulate( simTime, sim_dt )
-    utils.saveTables( [table1, table2 ]
-            , xscale = sim_dt
-            , file = 'data/moose.dat'
-            )
+    stamp = datetime.datetime.now().isoformat()
+    with open('moose.log', 'a') as logF:
+        logF.write('<simulation time_stamp="{}">\n'.format(stamp))
+        logF.write("\t<elements>\n")
+        logF.write("\t\t<Compartment>{}</Compartment>\n".format(args['ncomp']))
+        logF.write("\t</elements>\n")
+        logF.write("\t<times>\n")
+        logF.write("\t\t<Simulation>{}</Simulation>\n".format(st))
+        logF.write("\t</times>\n")
+        logF.write("</simulation>\n")
 
 if __name__ == '__main__':
     import argparse

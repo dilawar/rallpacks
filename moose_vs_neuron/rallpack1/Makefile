@@ -3,10 +3,10 @@ MOOSE_SCRIPT=moose_sim.py
 NRN_SCRIPT=neuron_sim.py
 MOOSE_DATA=data/moose.dat
 NEURON_DATA=data/nrn.dat
-RUN_TIME=0.25
+RUN_TIME=0.50
 
 
-all: data 
+all: data  compare
 
 compare: compare.py ${MOOSE_DATA} ${NEURON_DATA} 
 	@echo "[MAKE] Comparing data"
@@ -14,6 +14,7 @@ compare: compare.py ${MOOSE_DATA} ${NEURON_DATA}
 
 data: ${MOOSE_DATA} ${NEURON_DATA}
 	@echo [MAKE] Finished generating data.
+	@echo "Check *.log file for time taken by simulations"
 
 ${MOOSE_DATA}: moose_sim.py
 	@echo "[MAKE] Running moose on rallpack3"
