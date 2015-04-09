@@ -241,24 +241,16 @@ def setupDUT( dt ):
     pg.firstWidth = 25e-3
     pg.firstLevel = 1e-10
     moose.connect(pg, 'output', comp, 'injectMsg')
-    setupClocks( dt )
     
-def setupClocks( dt ):
-    moose.setClock(0, dt)
-    moose.setClock(1, dt)
 
 def setupSolver( hsolveDt ):
     hsolvePath = '/hsolve'
     hsolve = moose.HSolve( hsolvePath )
     hsolve.dt = hsolveDt
     hsolve.target = '/cable'
-    moose.useClock(1, hsolvePath, 'process')
 
 def simulate( runTime, dt):
     """ Simulate the cable """
-    moose.useClock(0, '/cable/##', 'process')
-    moose.useClock(0, '/cable/##', 'init')
-    moose.useClock(1, '/##', 'process')
     moose.reinit()
     setupSolver( hsolveDt = dt )
     utils.verify()
@@ -272,7 +264,7 @@ def main(args):
     table0 = utils.recordAt( '/table0', cable[0], 'vm')
     table1 = utils.recordAt( '/table1', cable[-1], 'vm')
     simulate( args['run_time'], dt )
-    utils.saveTables( [ table0, table1 ], file = args['output'], xscale = dt )
+    #utils.saveTables( [ table0, table1 ], file = args['output'], xscale = dt )
 
 if __name__ == '__main__':
     import argparse

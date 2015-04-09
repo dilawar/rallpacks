@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 echo "Profiling neuron simulator of rallpack3"
+set -x 
+set -e
 ncomp=50
 while [ $ncomp -lt 50000 ]; do
     echo "Cable with compartment $ncomp"
