@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """plot_benchmark.py: 
 
     Plot the benchmarks.
