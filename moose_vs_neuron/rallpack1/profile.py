@@ -30,7 +30,7 @@ cur_.execute(
         )""".format(tableName)
         )
 
-def insert(values):
+def insert(**values):
     simulator = values['simulator']
     keys = []
     vals = []

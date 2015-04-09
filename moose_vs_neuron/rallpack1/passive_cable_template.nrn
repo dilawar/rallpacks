@@ -40,7 +40,8 @@ proc run() { local io
         fprint("%g %g %g\n", t, v(||0||), v(||x||))
 	while (t < runtime) {
 	    fadvance()
-            fprint("%g %g %g\n", t, v(||0||), v(||x||))
+            /*fprint("%g %g %g\n", t, v(||0||), v(||x||))
+            */
 	}
 	wopen()
 }

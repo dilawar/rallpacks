@@ -189,13 +189,16 @@ def main( args ):
     outputFile = args['output']
 
     st = cable.simulate(simTime)
-
     print("++++ MOOSE took %s sec" % st)
     #utils.plotRecords(records)
-    utils.saveRecords(records, outfile="data/moose.dat")
-
     mooseEnds = time.time() - mooseBegin
-    profile.insert(
+
+    utils.saveRecords(records, outfile="data/moose.dat")
+    profile.insert(simulator = 'moose'
+            , no_of_compartment=args['ncomp']
+            , coretime = st
+            , runtime = mooseEnds
+            )
 
 if __name__ == '__main__':
     import argparse

@@ -23,6 +23,7 @@ import sys
 import subprocess
 import time
 import datetime
+import profile
 
 templateFile = './passive_cable_template.nrn'
 
@@ -57,17 +58,11 @@ def main(args):
         subprocess.check_call( cmd, shell=False)
         simTime = time.time() - t
         print("++++ NEURON took %s sec" % simTime)
-        st = time.time()
-        stamp = datetime.datetime.fromtimestamp(st).strftime('%Y-%m-%d-%H%M%S')
-        with open('neuron.log', 'a') as logF:
-            logF.write('<simulation time_stamp="{}">\n'.format(stamp))
-            logF.write("\t<elements>\n")
-            logF.write("\t\t<Compartment>{}</Compartment>\n".format(args['ncomp']))
-            logF.write("\t</elements>\n")
-            logF.write("\t<times>\n")
-            logF.write("\t\t<Simulation>{}</Simulation>\n".format(simTime))
-            logF.write("\t</times>\n")
-            logF.write("</simulation>\n")
+        profile.insert(simulator = 'moose'
+                , no_of_compartment=args['ncomp']
+                , coretime = simTime
+                , runtime = simTime
+                )
     else:
         print("Can't write to {}".format(outFile))
 

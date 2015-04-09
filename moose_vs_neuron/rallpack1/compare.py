@@ -92,8 +92,10 @@ def compareData(x1, y1, x2, y2, **kwargs):
     if not outfile:
         pylab.show()
     else:
-        mu.info("Saving figure to %s" % outfile)
+        print("[INFO] Saving figure to %s" % outfile)
         pylab.savefig(outfile)
+
+    return
     
     diff = y1 - y2
     linDiff = diff.sum()
@@ -140,7 +142,8 @@ def compare(mooseData, nrnData, outputFile = None):
     for v in mooseY:
         mooseY[v] = [ 1e3 * y for y in mooseY[v] ]
     for i, v in enumerate(mooseY):
-        compareData(mooseX, mooseY.values()[i], nrnX, nrnY.values()[i])
+        compareData(mooseX, mooseY.values()[i], nrnX, nrnY.values()[i],
+                outfile="moose_nrn.png")
 
 def txtToData(txt):
     """Convert text to data"""
