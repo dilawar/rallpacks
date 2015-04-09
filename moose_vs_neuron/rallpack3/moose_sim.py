@@ -17,8 +17,6 @@ __maintainer__       = "Dilawar Singh"
 __email__            = "dilawars@iitb.ac.in"
 __status__           = "Development"
 
-import sys
-sys.path.append('../../../python')
 import moose
 from moose import utils
 
@@ -26,13 +24,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-
-EREST_ACT = -65e-3
-per_ms = 1e3
-dt = 5e-5
-#dt = 1e-6
 cable = []
-
 
 class MooseCompartment():
     """A simple class for making MooseCompartment in moose"""
@@ -252,17 +244,14 @@ def setupSolver( hsolveDt ):
     hsolve = moose.HSolve( hsolvePath )
     hsolve.dt = hsolveDt
     hsolve.target = '/cable'
-    moose.useClock(1, hsolvePath, 'process')
 
 def simulate( runTime, dt):
     """ Simulate the cable """
-    moose.useClock(0, '/cable/##', 'process')
-    moose.useClock(0, '/cable/##', 'init')
-    moose.useClock(1, '/##', 'process')
     moose.reinit()
     setupSolver( hsolveDt = dt )
-    utils.verify()
+    t1 = time.time()
     moose.start( runTime )
+    return time.time() - t1
 
 def main(args):
     global cable
@@ -271,8 +260,12 @@ def main(args):
     setupDUT( dt )
     table0 = utils.recordAt( '/table0', cable[0], 'vm')
     table1 = utils.recordAt( '/table1', cable[-1], 'vm')
-    simulate( args['run_time'], dt )
-    utils.saveTables( [ table0, table1 ], file = args['output'], xscale = dt )
+    st = simulate( args['run_time'], dt )
+    prfile.insert( simulator='moose'
+            , no_of_compartment=args['ncomp']
+            , coretime=st
+            )
+    #utils.saveTables( [ table0, table1 ], file = args['output'], xscale = dt )
 
 if __name__ == '__main__':
     import argparse
