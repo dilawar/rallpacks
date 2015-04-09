@@ -26,7 +26,10 @@ import pylab
 import numpy as np
 import time
 import datetime
+from profile import query
 
+pymoose_t_ = 0.0
+moose_t_ = 0.0
 
 class MooseCompartment():
     """A simple class for making MooseCompartment in moose"""
