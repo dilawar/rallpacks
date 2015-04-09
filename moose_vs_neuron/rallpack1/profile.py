@@ -18,35 +18,43 @@ import sqlite3 as sql
 dbFile = '_profile.sqlite'
 conn_ = sql.connect(dbFile)
 cur_ = conn_.cursor()
+tableName = 'rallpack1'
 
 cur_.execute(
-        """CREATE TABLE IF NOT EXISTS profile ( time DATETIME 
+        """CREATE TABLE IF NOT EXISTS {} ( time DATETIME 
         , no_of_compartment INTEGER 
-        , whichrun INTEGER PRIMARY KEY ASC DEFAULT '0'
+        , whichrun INTEGER PRIMARY KEY ASC 
         , moosecore REAL DEFAULT -1
         , pymoose REAL DEFAULT -1
         , neuron REAL DEFAULT -1
         , moose_comment TEXT
         , neuron_comment TEXT
-        )"""
+        )""".format(tableName)
         )
 
 def insert(values):
-    cur_.execute("""SELECT MAX(whichrun) FROM profile""")
+    cur_.execute("""SELECT MAX(whichrun) FROM %s"""%tableName)
     whichrun = cur_.fetchone()[0]
-    if not whichrun:
+    print whichrun
+    if whichrun is None:
         whichrun = 0
-    cur_.execute("INSERT OR IGNORE INTO profile (whichrun) VALUES ('{}')".format(whichrun))
+    else: whichrun += 1
+    cur_.execute("INSERT OR IGNORE INTO {} (whichrun) VALUES ('{}')".format(
+        tableName, whichrun
+        ))
     stmt = []
     for k in values: stmt.append("%s='%s'"%(k, values[k]))
+    stmt.append("time=datetime('now')")
     stmt = ",".join(stmt)
-    query = "UPDATE profile SET {} WHERE whichrun='{}'".format(stmt, whichrun)
-    print("QUERY: %s" % query)
+    query = "UPDATE {} SET {} WHERE whichrun='{}'".format(tableName, stmt, whichrun)
+    print("Excuting: %s" % query)
     cur_.execute(query)
     conn_.commit()
 
 def main():
     insert({ 'no_of_compartment': 100, 'moosecore' : 0.0001 })
+    for c in cur_.execute("SELECT * from %s"%tableName):
+        print c
 
 if __name__ == '__main__':
     main()

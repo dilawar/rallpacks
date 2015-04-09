@@ -27,3 +27,8 @@ $(NEURON_DATA): neuron_sim.py passive_cable_template.nrn
 
 clean:
 	rm -f $(MOOSE_DATA) $(NEURON_DATA) 
+
+
+purge: 
+	make clean
+	rm -rf *.sqlite *.log
