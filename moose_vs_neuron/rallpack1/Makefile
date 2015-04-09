@@ -25,6 +25,11 @@ $(NEURON_DATA): neuron_sim.py passive_cable_template.nrn
 	@echo "[MAKE] Running NEURON on rallpack3"
 	time $(PYC) $< --run_time $(RUN_TIME) --ncomp $(NUM_COMPT) --data $@
 
+benchmark:
+	./generate_benchmark.sh 
+	python ./plot_benchmark.py 
+
+
 clean:
 	rm -f $(MOOSE_DATA) $(NEURON_DATA) 
 
