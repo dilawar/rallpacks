@@ -58,7 +58,7 @@ def main(args):
         subprocess.check_call( cmd, shell=False)
         simTime = time.time() - t
         print("++++ NEURON took %s sec" % simTime)
-        profile.insert(simulator = 'moose'
+        profile.insert(simulator = 'neuron'
                 , no_of_compartment=args['ncomp']
                 , coretime = simTime
                 , runtime = simTime
