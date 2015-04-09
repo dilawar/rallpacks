@@ -41,6 +41,7 @@ def plotBenchmark():
         pylab.legend(loc='best', framealpha=0.4)
         pylab.xlabel("No of compartment in rallpack1")
         pylab.ylabel("Time taken (sec)")
+    pylab.savefig("rallpack1_benchmark.png")
     pylab.show()
 
 def main():
