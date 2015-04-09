@@ -20,6 +20,7 @@ import sys
 from collections import defaultdict
 import pylab
 import numpy as np
+from scipy import ndimage
 
 EPSILON = 1e-10
 
@@ -95,6 +96,8 @@ def compareData(x1, y1, x2, y2, **kwargs):
         mu.info("Saving figure to %s" % outfile)
         pylab.savefig(outfile)
     
+    if len(y1) > len(y2): y1 = ndimage.zoom(y1, len(y1)/len(y2))
+    else: y2 = ndimage.zoom(y2, len(y2)/len(y1))
     diff = y1 - y2
     linDiff = diff.sum()
     rms = np.zeros(len(diff))

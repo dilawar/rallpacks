@@ -4,7 +4,7 @@ NRN_SCRIPT=neuron_sim.py
 MOOSE_DATA=data/moose.dat
 NEURON_DATA=data/nrn.dat
 RUN_TIME=0.25
-NUM_COMPT=20000
+NUM_COMPT=1000
 
 
 all: data  compare
