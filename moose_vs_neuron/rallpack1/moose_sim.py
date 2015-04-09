@@ -26,7 +26,7 @@ import pylab
 import numpy as np
 import time
 import datetime
-import profile
+import _profile
 
 pymoose_t_ = 0.0
 moose_t_ = 0.0
@@ -194,7 +194,7 @@ def main( args ):
     mooseEnds = time.time() - mooseBegin
 
     utils.saveRecords(records, outfile="data/moose.dat")
-    profile.insert(simulator = 'moose'
+    _profile.insert(simulator = 'moose'
             , no_of_compartment=args['ncomp']
             , coretime = st
             , runtime = mooseEnds

@@ -23,7 +23,7 @@ import sys
 import subprocess
 import time
 import datetime
-import profile
+import _profile
 
 templateFile = './passive_cable_template.nrn'
 
@@ -58,7 +58,7 @@ def main(args):
         subprocess.check_call( cmd, shell=False)
         simTime = time.time() - t
         print("++++ NEURON took %s sec" % simTime)
-        profile.insert(simulator = 'neuron'
+        _profile.insert(simulator = 'neuron'
                 , no_of_compartment=args['ncomp']
                 , coretime = simTime
                 , runtime = simTime
