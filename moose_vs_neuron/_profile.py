@@ -14,8 +14,9 @@ __email__            = "dilawars@ncbs.res.in"
 __status__           = "Development"
 
 import sqlite3 as sql 
+import sys
 
-dbFile = '_profile.sqlite'
+dbFile = '{}/_profile.sqlite'.format(sys.argv[1])
 conn_ = sql.connect(dbFile)
 cur_ = conn_.cursor()
 tableName = 'rallpack1'

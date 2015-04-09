@@ -14,19 +14,18 @@ __maintainer__       = "Dilawar Singh"
 __email__            = "dilawars@ncbs.res.in"
 __status__           = "Development"
 
-import profile
+import sys
+import _profile
 import pylab
 import sqlite3 as sql
 from collections import defaultdict
 
 benchmark = defaultdict(list)
 
-dbFile = profile.dbFile
-tableName = profile.tableName
+dbFile = _profile.dbFile
+tableName = _profile.tableName
 
-
-
-def plotBenchmark():
+def plotBenchmark(d):
     db = sql.connect(dbFile)
     cur = db.cursor()
     for sim in ['moose', 'neuron']:
@@ -41,12 +40,13 @@ def plotBenchmark():
         pylab.legend(loc='best', framealpha=0.4)
         pylab.xlabel("No of compartment in rallpack1")
         pylab.ylabel("Time taken (sec)")
-    pylab.savefig("rallpack1_benchmark.png")
-    pylab.show()
+
+    filename = "{}_benchmark.png".format(d)
+    print("Saving benchmark to %s" % filename)
+    pylab.savefig(filename)
 
 def main():
-    plotBenchmark()
-
+    plotBenchmark(sys.argv[1])
 
 if __name__ == '__main__':
     main()
