@@ -23,7 +23,12 @@ from moose import utils
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+import time
+import profile
 
+EREST_ACT = -65e-3
+per_ms = 1e3
+dt = 5e-5
 cable = []
 
 class MooseCompartment():
@@ -233,12 +238,7 @@ def setupDUT( dt ):
     pg.firstWidth = 25e-3
     pg.firstLevel = 1e-10
     moose.connect(pg, 'output', comp, 'injectMsg')
-    setupClocks( dt )
     
-def setupClocks( dt ):
-    moose.setClock(0, dt)
-    moose.setClock(1, dt)
-
 def setupSolver( hsolveDt ):
     hsolvePath = '/hsolve'
     hsolve = moose.HSolve( hsolvePath )
@@ -257,15 +257,15 @@ def main(args):
     global cable
     dt = args['dt']
     makeCable(args)
-    setupDUT( dt )
+    setupDUT(dt)
     table0 = utils.recordAt( '/table0', cable[0], 'vm')
     table1 = utils.recordAt( '/table1', cable[-1], 'vm')
     st = simulate( args['run_time'], dt )
-    prfile.insert( simulator='moose'
+    profile.insert( simulator='moose'
             , no_of_compartment=args['ncomp']
             , coretime=st
             )
-    #utils.saveTables( [ table0, table1 ], file = args['output'], xscale = dt )
+    utils.saveRecords({ 'table0' : table0, 'table1' : table1 })
 
 if __name__ == '__main__':
     import argparse
