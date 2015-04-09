@@ -23,36 +23,34 @@ tableName = 'rallpack1'
 cur_.execute(
         """CREATE TABLE IF NOT EXISTS {} ( time DATETIME 
         , no_of_compartment INTEGER 
-        , whichrun INTEGER PRIMARY KEY ASC 
-        , moosecore REAL DEFAULT -1
-        , pymoose REAL DEFAULT -1
-        , neuron REAL DEFAULT -1
-        , moose_comment TEXT
-        , neuron_comment TEXT
+        , simulator TEXT NOT NULL
+        , runtime REAL DEFAULT -1
+        , coretime REAL DEFAULT -1
+        , comment TEXT
         )""".format(tableName)
         )
 
 def insert(values):
-    cur_.execute("""SELECT MAX(whichrun) FROM %s"""%tableName)
-    whichrun = cur_.fetchone()[0]
-    print whichrun
-    if whichrun is None:
-        whichrun = 0
-    else: whichrun += 1
-    cur_.execute("INSERT OR IGNORE INTO {} (whichrun) VALUES ('{}')".format(
-        tableName, whichrun
-        ))
-    stmt = []
-    for k in values: stmt.append("%s='%s'"%(k, values[k]))
-    stmt.append("time=datetime('now')")
-    stmt = ",".join(stmt)
-    query = "UPDATE {} SET {} WHERE whichrun='{}'".format(tableName, stmt, whichrun)
+    simulator = values['simulator']
+    keys = []
+    vals = []
+    for k in values: 
+        keys.append(k)
+        vals.append("'%s'"%values[k])
+    keys.append("time")
+    vals.append("datetime('now')")
+
+    keys = ",".join(keys)
+    vals = ",".join(vals)
+    
+    query = """INSERT INTO {} ({}) VALUES ({})""".format(tableName, keys, vals)
     print("Excuting: %s" % query)
     cur_.execute(query)
     conn_.commit()
 
 def main():
-    insert({ 'no_of_compartment': 100, 'moosecore' : 0.0001 })
+    insert({ 'no_of_compartment': 100, 'coretime' : 0.0001, 'simulator' : 'moose' })
+    insert({ 'no_of_compartment': 100, 'coretime' : 0.0001, 'simulator' : 'neuron' })
     for c in cur_.execute("SELECT * from %s"%tableName):
         print c
 

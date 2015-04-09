@@ -26,7 +26,7 @@ import pylab
 import numpy as np
 import time
 import datetime
-from profile import query
+import profile
 
 pymoose_t_ = 0.0
 moose_t_ = 0.0
@@ -174,6 +174,7 @@ class PasiveCable( ):
         
 
 def main( args ):
+    mooseBegin = time.time()
     cableLength = args['length']
     compNons = args['ncomp']
     compartmentSize = cableLength / compNons
@@ -186,21 +187,15 @@ def main( args ):
     simTime = args['run_time']
     sim_dt = args['dt']
     outputFile = args['output']
+
     st = cable.simulate(simTime)
+
     print("++++ MOOSE took %s sec" % st)
     #utils.plotRecords(records)
     utils.saveRecords(records, outfile="data/moose.dat")
 
-    stamp = datetime.datetime.now().isoformat()
-    with open('moose.log', 'a') as logF:
-        logF.write('<simulation time_stamp="{}">\n'.format(stamp))
-        logF.write("\t<elements>\n")
-        logF.write("\t\t<Compartment>{}</Compartment>\n".format(args['ncomp']))
-        logF.write("\t</elements>\n")
-        logF.write("\t<times>\n")
-        logF.write("\t\t<Simulation>{}</Simulation>\n".format(st))
-        logF.write("\t</times>\n")
-        logF.write("</simulation>\n")
+    mooseEnds = time.time() - mooseBegin
+    profile.insert(
 
 if __name__ == '__main__':
     import argparse
