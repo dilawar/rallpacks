@@ -18,7 +18,8 @@ the execution of `moose.start()` function i.e. the time taken by MOOSE-C++ core
 to compute the model was taken into account. To be fair to NEURON, we disabled
 writing data to a file by NEURON.
 
-In MOOSE, default clock settings were used.
+In MOOSE, default clock settings were used. Electrical `dt` is 50 micro-seconds,
+same as NEURON. However, clocks which read data has tick of 100 micro-seconds.
 
 # Observation
 
